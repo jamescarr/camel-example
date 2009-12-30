@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+	<jaxws:client id="helloClient"
+                  xmlns:service="http://examples.camel.james-carr.org"
+                  serviceName="service:CustomerService"
+				  endpointName="service:CustomerServiceEndpoint"
+                  serviceClass="org.jamescarr.EligibilityService"
+                  address="http://localhost:7001/camel-war/services/A" />
+</beans>

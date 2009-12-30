@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:cxf="http://camel.apache.org/schema/cxf"
+	xmlns:camel="http://camel.apache.org/schema/spring"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+		http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring-2.1.0.xsd
+		http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+	
+	<cxf:cxfEndpoint id="routerEndpoint" 
+		address="/A"
+		xmlns:service="http://examples.camel.james-carr.org"
+        serviceName="service:CustomerService"
+		endpointName="service:CustomerServiceEndpoint" 
+		serviceClass="org.jamescarr.EligibilityServiceImpl"
+		/>
+	
+	<cxf:cxfEndpoint id="serviceEndpoint" 
+		address="/B"
+		xmlns:service="http://examples.camel.james-carr.org"
+        serviceName="service:CustomerService"
+		endpointName="service:CustomerServiceEndpoint" 
+		serviceClass="org.jamescarr.EligibilityServiceImpl"
+		/>
+	<camel:camelContext id="camel">
+		<camel:route>
+			<camel:from uri="cxf:bean:routerEndpoint" />
+			<camel:to uri="cxf:bean:routerEndpoint" />
+		</camel:route>
+	</camel:camelContext>
+	
+</beans>
