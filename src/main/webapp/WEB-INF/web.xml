@@ -14,4 +14,15 @@
     <servlet-name>CXFServlet</servlet-name>
     <url-pattern>/services/*</url-pattern>
   </servlet-mapping>
+  
+  <resource-ref>
+  	<res-ref-name>sarConnectionFactory</res-ref-name>
+  	<res-type>javax.jms.ConnectionFactory</res-type>
+  	<res-auth>Application</res-auth>
+  </resource-ref>
+  <resource-ref>
+  	<res-ref-name>processCompleted</res-ref-name>
+  	<res-type>javax.jms.Topic</res-type>
+  	<res-auth>Application</res-auth>
+  </resource-ref>
 </web-app>

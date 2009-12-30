@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:cxf="http://camel.apache.org/schema/cxf"
-	xmlns:camel="http://camel.apache.org/schema/spring"
-	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cxf="http://camel.apache.org/schema/cxf"
+	xmlns:camel="http://camel.apache.org/schema/spring" xmlns:jee="http://www.springframework.org/schema/jee"
 	xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
 		http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring-2.1.0.xsd
 		http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
@@ -13,22 +11,40 @@
 	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
+
+	<cxf:cxfEndpoint id="routerEndpoint" address="/A"
+		xmlns:service="http://examples.camel.james-carr.org" serviceName="service:CustomerService"
+		endpointName="service:CustomerServiceEndpoint" serviceClass="org.jamescarr.EligibilityService" />
+
+	<bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
+		<property name="configuration" ref="jmsConfiguration" />
+	</bean>
 	
-	<cxf:cxfEndpoint id="routerEndpoint" 
-		address="/A"
-		xmlns:service="http://examples.camel.james-carr.org"
-        serviceName="service:CustomerService"
-		endpointName="service:CustomerServiceEndpoint" 
-		serviceClass="org.jamescarr.EligibilityService"
-		/>
-	
-	
-	<bean id="testBean" class="org.jamescarr.EligibilityServiceImpl" />
+	<jee:jndi-lookup id="jmsConnectionFactory"
+		jndi-name="org/jamescarr/sarConnectionFactory"></jee:jndi-lookup>
+	<bean id="jmsConfiguration" class="org.apache.camel.component.jms.JmsConfiguration">
+		<property name="connectionFactory" ref="jmsConnectionFactory" />
+		<property name="concurrentConsumers" value="1" />
+		<property name="destinationResolver" ref="jmsResolver"></property>
+	</bean>
+	<bean id="jndiTemplate" class="org.springframework.jndi.JndiTemplate">
+		<property name="environment">
+			<props>
+				<prop key="java.naming.factory.initial">weblogic.jndi.WLInitialContextFactory</prop>
+				<prop key="java.naming.provider.url">t3://localhost:7001</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="jmsResolver"
+		class="org.springframework.jms.support.destination.JndiDestinationResolver">
+		<property name="jndiTemplate" ref="jndiTemplate"/>
+	</bean>
+
 	<camel:camelContext id="camel">
 		<camel:route>
 			<camel:from uri="cxf:bean:routerEndpoint" />
-			<camel:to uri="bean:testBean?method=upgradeVins" />
+			<camel:to uri="jms:topic:jms/processCompleted?jmsMessageType=Text" />
 		</camel:route>
 	</camel:camelContext>
-	
+
 </beans>
