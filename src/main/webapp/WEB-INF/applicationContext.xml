@@ -19,20 +19,15 @@
 		xmlns:service="http://examples.camel.james-carr.org"
         serviceName="service:CustomerService"
 		endpointName="service:CustomerServiceEndpoint" 
-		serviceClass="org.jamescarr.EligibilityServiceImpl"
+		serviceClass="org.jamescarr.EligibilityService"
 		/>
 	
-	<cxf:cxfEndpoint id="serviceEndpoint" 
-		address="/B"
-		xmlns:service="http://examples.camel.james-carr.org"
-        serviceName="service:CustomerService"
-		endpointName="service:CustomerServiceEndpoint" 
-		serviceClass="org.jamescarr.EligibilityServiceImpl"
-		/>
+	
+	<bean id="testBean" class="org.jamescarr.EligibilityServiceImpl" />
 	<camel:camelContext id="camel">
 		<camel:route>
 			<camel:from uri="cxf:bean:routerEndpoint" />
-			<camel:to uri="cxf:bean:serviceEndpoint" />
+			<camel:to uri="bean:testBean?method=upgradeVins" />
 		</camel:route>
 	</camel:camelContext>
 	
