@@ -32,7 +32,7 @@
 	<camel:camelContext id="camel">
 		<camel:route>
 			<camel:from uri="cxf:bean:routerEndpoint" />
-			<camel:to uri="cxf:bean:routerEndpoint" />
+			<camel:to uri="cxf:bean:serviceEndpoint" />
 		</camel:route>
 	</camel:camelContext>
 	
